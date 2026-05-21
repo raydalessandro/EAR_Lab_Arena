@@ -75,25 +75,29 @@ In sintesi (dettagli in [`AGENTI.md`](./AGENTI.md)):
    cerca repo open source TS con bug documentato, ne propone 3 a Ray
    anonimizzati. Ray sceglie.
 
-2. Architetto costruisce `sfida-NN-nome/` sul main con la codebase
-   pre-fix (anonimizzata nei metadati). Mette il briefing in
-   `.orchestrazione/sfida-NN-nome/briefing-per-ray.md` e la chiave in
-   `.architetto/sfida-NN-nome-postmortem-key.md`. Pusha sul main.
+2. Architetto costruisce una sottocartella sul main con il **nome del
+   modulo** (es. `query-filter/`, `scheduler/`, niente prefisso `sfida-`
+   che tradirebbe il framing). Dentro c'è la codebase pre-fix
+   anonimizzata + un `CLAUDE.md` di modulo. Mette il briefing in
+   `.orchestrazione/sfida-NN-modulo/briefing-per-ray.md` e la chiave in
+   `.architetto/sfida-NN-modulo-postmortem-key.md`. Pusha sul main.
 
 3. Ray apre una **seconda** finestra di Claude Code → Claude Sfidante,
-   con `cd sfida-NN-nome` come working directory, partendo da una
-   working branch (`ray-work-sfida-NN-nome`) dal main. Le dice in stile
-   bug report: *"Modulo X, sintomo Y, sistemalo, stai dentro al modulo."*
+   con `cd <nome-modulo>` come working directory, partendo da una
+   working branch dal main. Le dice in stile bug report: *"Modulo X,
+   sintomo Y, sistemalo, stai dentro al modulo."*
 
-4. Ray orchestra Sfidante: decide quale pista seguire, quando spingere,
-   quando cambiare strategia. Logga le mosse in
-   `.orchestrazione/sfida-NN-nome/log-orchestrazione.md`.
+4. Ray orchestra Sfidante a modo suo. **Non logga durante il flow** —
+   sarebbe pedante e disturberebbe la concentrazione. Alla fine del
+   round, Ray passa ad Architetto la transcript della sessione Sfidante
+   (anche copia-incolla testuale) e Architetto ricostruisce
+   `log-orchestrazione.md` estraendo le mosse significative.
 
 5. Quando il round chiude (vittoria/sconfitta/pareggio), Ray torna su
    Architetto. Architetto rivela il bug e scrive la sua parte del
    `POST-MORTEM.md`. Ray completa la sua. La working branch di Sfidante
    si merga sul main se ha vinto, altrimenti resta come archivio. La
-   sottocartella `sfida-NN-nome/` resta intatta come museo.
+   sottocartella del modulo resta intatta come museo.
 
 ## Le tre regole
 
@@ -114,9 +118,9 @@ ear-lab-arena/
 │   ├── sfida-01-query-filter/
 │   ├── sfida-02-scheduler/
 │   └── sfida-03-binary-parser/
-├── sfida-01-query-filter/              ← codebase armata, modulo isolato
-├── sfida-02-scheduler/
-└── sfida-03-binary-parser/
+├── query-filter/                       ← codebase armata, modulo isolato (sfida 01)
+├── scheduler/                          ← modulo isolato (sfida 02)
+└── binary-parser/                      ← modulo isolato (sfida 03)
 ```
 
 ## Per chi arriva qui da fuori

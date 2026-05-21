@@ -70,7 +70,13 @@ Claude Architetto allora:
 
 ### Fase 2 — Costruzione della sottocartella
 
-5. Sul **main**, crea una sottocartella `sfida-NN-nome/`.
+5. Sul **main**, crea una sottocartella con il **nome del modulo**
+   (es. `query-filter/`, `scheduler/`, `binary-parser/`). **NON usare**
+   un nome con prefisso `sfida-NN-` — l'AI Sfidante che fa `pwd` o
+   `cd <cartella>` leggerebbe "sfida" e capirebbe che è un esercizio,
+   rompendo il framing realistico. La mappatura `NN ↔ nome-modulo`
+   vive solo in `ALBO.md` e nelle cartelle hidden, non nel filesystem
+   visibile a Sfidante.
 6. Dentro la sottocartella: la codebase del caso reale al commit pre-fix,
    con metadati di branding **anonimizzati**:
    - `package.json` / `deno.json`: nome, repository, homepage, author
@@ -87,12 +93,21 @@ Claude Architetto allora:
 
 ### Fase 3 — Materiali di orchestrazione e chiave
 
-10. Crea `.orchestrazione/sfida-NN-nome/` con:
+10. Crea `.orchestrazione/sfida-NN-modulo/` (con prefisso `sfida-NN-`
+    perché qui dentro è materiale Ray/Architetto e il nome lungo aiuta
+    a indicizzare i round nel tempo). Contiene:
     - `briefing-per-ray.md`: descrizione onesta del sintomo riproducibile,
-      che Ray userà per costruire il prompt iniziale a Sfidante.
-    - `log-orchestrazione.md`: diario delle mosse di Ray durante il round
-      (Ray scrive qui durante il gioco).
-    - `POST-MORTEM.md`: vuoto, da compilare a round chiuso.
+      che Ray userà come materiale di riferimento (non come prompt
+      letterale) per impostare la sessione Sfidante.
+    - `PRE-ROUND.md`: copia dal `_template-round/`. Ray lo compila prima
+      di aprire Sfidante — griglia di pensiero derivata dal libro
+      *Dal Campo alla Terra*.
+    - `log-orchestrazione.md`: scheletro vuoto. Si compila
+      **retrospettivamente** a fine round (vedi sotto).
+    - `POST-ROUND.md`: copia dal `_template-round/`. Ray lo compila dopo
+      la chiusura, come diario di crescita come orchestratore.
+    - `POST-MORTEM.md`: vuoto, da compilare a round chiuso da Architetto
+      con la rivelazione del bug + analisi condivisa con Ray.
 11. Crea `.architetto/sfida-NN-nome-postmortem-key.md` con la chiave
     privata del bug: file/funzione del fix, link a issue/PR upstream,
     catena di ragionamento attesa. Per uso di Architetto futuro al
@@ -118,10 +133,12 @@ Claude Architetto allora:
 ## Cosa fa Claude Sfidante
 
 All'inizio di un round, Ray apre una **nuova istanza** di Claude Code
-con working directory **dentro `sfida-NN-nome/`** (idealmente da una
-working branch dal main, es. `ray-work-sfida-NN-nome`). Il prompt
-iniziale che Ray scrive a Sfidante è in stile bug report, **senza
-menzionare la palestra**. Esempio:
+con working directory **dentro la cartella del modulo** (es. `query-filter/`),
+idealmente da una working branch dal main. Il prompt iniziale che Ray
+scrive a Sfidante è in stile bug report, **senza menzionare la palestra**.
+Ogni orchestratore segue il proprio metodo — il `briefing-per-ray.md`
+fornisce il materiale (sintomo, esempio riproducibile, adattamenti
+dichiarati), non un copione. Esempio di prompt iniziale possibile:
 
 > "Lavoriamo su questo modulo `query-filter`. Stiamo ricevendo segnalazioni
 > di un errore quando gli utenti combinano certe condizioni di filtro con
@@ -160,22 +177,33 @@ Claude Sfidante allora:
 Quando il round si chiude (vittoria, sconfitta o pareggio):
 
 1. Ray torna su Claude Architetto e dice: "Round NN chiuso. Esito: [Ray
-   ha trovato / Ray si è arreso / pareggio]. Scriviamo il post-mortem."
-2. Claude Architetto:
-   - Legge `.architetto/sfida-NN-nome-postmortem-key.md` per recuperare
+   ha trovato / Ray si è arreso / pareggio]. Scriviamo log e
+   post-mortem."
+2. Ray passa ad Architetto la **transcript della sessione Sfidante**
+   (anche solo copia-incolla testuale dei prompt + risposte). Il log
+   non si scrive in tempo reale durante il flow — sarebbe pedante e
+   romperebbe la concentrazione. Si **ricostruisce a posteriori** dalle
+   tracce della conversazione.
+3. Claude Architetto:
+   - Legge la transcript e estrae le mosse significative di Ray, le
+     compila in `.orchestrazione/sfida-NN-modulo/log-orchestrazione.md`.
+     Una "mossa" è un punto di decisione: cosa chiedere, dove guardare,
+     a quale ipotesi credere, quando cambiare pista. NON serve
+     trascrivere ogni scambio — solo i bivi.
+   - Legge `.architetto/sfida-NN-modulo-postmortem-key.md` per recuperare
      la chiave.
-   - Compila `.orchestrazione/sfida-NN-nome/POST-MORTEM.md` con la sua
+   - Compila `.orchestrazione/sfida-NN-modulo/POST-MORTEM.md` con la sua
      prospettiva (rivela il bug, spiega la strategia di armamento,
      dichiara se la sua previsione iniziale si è verificata).
    - Aggiorna `ALBO.md` con l'esito definitivo.
-3. Ray completa il `POST-MORTEM.md` con la sua prospettiva.
-4. Se Sfidante aveva trovato e fixato il bug, la working branch si merga
+4. Ray completa il `POST-MORTEM.md` con la sua prospettiva.
+5. Se Sfidante aveva trovato e fixato il bug, la working branch si merga
    sul main come "fix(sfida-NN): risoluzione". Altrimenti resta come
    archivio non mergiata.
-5. La sottocartella `sfida-NN-nome/` resta sul main, come museo del
-   round giocato. **Non si tocca più.**
-6. Per il prossimo round, Architetto aggiunge `sfida-(NN+1)-nome/` come
-   nuova sottocartella, senza toccare le precedenti.
+6. La sottocartella del modulo resta sul main, come museo del round
+   giocato. **Non si tocca più.**
+7. Per il prossimo round, Architetto aggiunge una nuova sottocartella
+   con un altro nome neutro di modulo, senza toccare le precedenti.
 
 ## Onestà strutturale
 

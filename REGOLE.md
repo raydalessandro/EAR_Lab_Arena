@@ -50,10 +50,11 @@ quello che è **fuori** da quella cartella appartiene a "altri team" nel
 framing realistico, e non va letto.
 
 Ray apre la sessione di Sfidante con **working directory dentro la
-sottocartella**:
+cartella del modulo** (es. `query-filter/`, `scheduler/`, niente
+prefisso `sfida-` nel nome — l'AI lo riconoscerebbe come "challenge"):
 
 ```bash
-cd sfida-NN-nome
+cd <nome-modulo>
 claude
 ```
 

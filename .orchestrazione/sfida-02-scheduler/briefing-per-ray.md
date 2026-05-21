@@ -3,8 +3,7 @@
 > Riservato a Ray. Lo Sfidante non lo legge.
 >
 > Da questo file Ray costruisce il prompt iniziale stile bug report da
-> dare a Sfidante quando apre la sessione con `cwd` in
-> `sfida-02-scheduler/`.
+> dare a Sfidante quando apre la sessione con `cwd` in `scheduler/`.
 
 ## Caso reale di partenza
 

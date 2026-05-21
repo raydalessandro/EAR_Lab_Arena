@@ -3,9 +3,9 @@
 > Riservato a Ray. Lo Sfidante non lo legge.
 >
 > Da questo file Ray costruisce il prompt iniziale stile bug report da
-> dare a Sfidante quando apre la sessione con `cwd` in
-> `sfida-01-query-filter/`. Sfidante crede di lavorare a un modulo
-> reale di produzione, non a una sfida.
+> dare a Sfidante quando apre la sessione con `cwd` in `query-filter/`.
+> Sfidante crede di lavorare a un modulo reale di produzione, non a
+> una sfida.
 
 ## Caso reale di partenza
 

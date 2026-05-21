@@ -3,8 +3,7 @@
 > Riservato a Ray. Lo Sfidante non lo legge.
 >
 > Da questo file Ray costruisce il prompt iniziale stile bug report da
-> dare a Sfidante quando apre la sessione con `cwd` in
-> `sfida-03-binary-parser/`.
+> dare a Sfidante quando apre la sessione con `cwd` in `binary-parser/`.
 >
 > **Carattere di questo round**: code review più che test-driven. La
 > suite esistente passa verde, le fixtures incluse non triggerano il
