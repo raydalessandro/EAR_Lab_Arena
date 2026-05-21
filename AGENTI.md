@@ -57,16 +57,24 @@ All'inizio di un round, Ray scrive a Claude Architetto:
 
 Claude Architetto allora:
 
-### Fase 1 — Ricerca del caso reale
+### Fase 1 — Ricerca dello scenario reale
 
-1. Cerca repo open source TypeScript di calibro adeguato dove un bug
-   semantico è stato documentato (issue + PR di fix).
-2. Identifica lo SHA del commit immediatamente PRIMA del fix (lo stato
-   "armato" naturale).
-3. Verifica che il bug sia inferibile dalla sola codebase, producibile,
-   plausibile (Regola 3).
-4. Presenta a Ray 2-3 candidati anonimizzati (dominio + sintomo + calibro,
-   no nome repo, no link), Ray sceglie.
+1. Cerca casi reali documentati (post-mortem pubblici, blog di
+   engineering, issue+PR su repo OSS, CVE, regression report) che
+   abbiano almeno **una dimensione extra-codebase** della Regola 3:
+   conoscenza di business mancante, test esistenti fuorvianti,
+   multi-modulo, confirmation bias prevedibile, trade-off
+   architetturale, pressione temporale, storia del codice.
+2. **Test di validità del candidato (obbligatorio)**: prima di
+   proporre il caso a Ray, fai mentalmente questa prova: *"Se aprissi
+   un'altra istanza di Claude Code dentro questa cartella, e le
+   dicessi 'c'è questo sintomo, riproduci e fixa', cosa farebbe?"* Se
+   la risposta è "trova il bug in 5-15 minuti senza vera direzione",
+   il candidato non è valido come scenario di palestra. Scarta o
+   trasforma.
+3. Identifica lo SHA del commit pre-fix nello scenario di partenza.
+4. Presenta a Ray 2-3 candidati anonimizzati (dominio + sintomo +
+   dimensione extra-codebase + calibro, no nome repo). Ray sceglie.
 
 ### Fase 2 — Costruzione della sottocartella
 

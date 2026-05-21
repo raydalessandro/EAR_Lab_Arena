@@ -1,27 +1,39 @@
 # ear-lab-arena
 
-> Una palestra di duelli asimmetrici fra due istanze di Claude Code
-> orchestrate da un essere umano che non sa leggere codice.
+> Una palestra di scenari di lavoro per AI Orchestrator: umani che non
+> scrivono codice e dirigono un'AI dev su problemi dove l'AI da sola
+> fallirebbe.
 
 ## Cos'è
 
-Questo repo è un **campo di sfida** fra tre attori:
+Questo repo non è un duello. È un **laboratorio formativo** in cui un
+**designer di scenario** (un'istanza di Claude in ruolo "Architetto")
+costruisce situazioni realistiche di lavoro che mettono in difficoltà
+una **AI dev di servizio** (un'altra istanza di Claude in ruolo
+"Sfidante"). In mezzo c'è l'**orchestratore** (Ray): un umano che usa
+la AI dev come *strumento* per risolvere il problema, esattamente come
+un dev userebbe un IDE.
 
-- **Claude Architetto** — un'istanza di Claude Code che sceglie un caso
-  reale di bug accaduto in un repo open source, ricostruisce lo stato
-  pre-fix come sottocartella `sfida-NN-nome/` sul main e ne anonimizza
-  i metadati.
-- **Claude Sfidante** — una **diversa** istanza di Claude Code, senza
-  memoria di cosa ha fatto Architetto, che riceve una working branch sul
-  main con working directory dentro `sfida-NN-nome/`. Non sa di essere
-  in una sfida: Ray la introduce come task di lavoro reale.
-- **Ray** — l'orchestratore umano, giudice di gara. Non scrive codice,
-  non lancia comandi git. Apre due finestre di Claude Code, scrive
-  prompt in italiano, osserva, decide quando il round si chiude.
+Tre attori, ruoli ridefiniti:
 
-La sfida non è fra Ray e il codice. Ray non legge il codice. La sfida è
-fra **Architetto** e **la coppia Ray+Sfidante**. Il delta misurabile è
-Ray. Quel delta è la skill che si allena.
+- **Claude Architetto** — designer dello scenario. Sceglie un caso
+  reale di lavoro (bug, decisione architetturale, contratto inter-team
+  rotto) dove la *sola lettura della codebase non basta* per risolvere
+  bene. Costruisce la sottocartella del modulo sul main, dichiara una
+  predizione falsificabile sul comportamento dell'orchestratore-tipo.
+- **Claude Sfidante** — strumento di lavoro dell'orchestratore.
+  Equivalente a un'AI dev incaricata dal team di guardare il modulo.
+  Non è un avversario: è un junior con accesso completo al codice del
+  modulo, che lavora bene se diretto bene e va in rabbit hole se
+  diretto male. Non sa di essere in un esercizio.
+- **Ray** — l'orchestratore. Il vero protagonista. Non legge codice,
+  non scrive comandi git. Riceve da Architetto uno scenario; usa
+  Sfidante come strumento; produce un fix (o una resa); a fine round
+  riflette su cosa ha fatto funzionare l'orchestrazione e cosa no.
+
+**Non c'è una sfida da vincere. C'è una skill da allenare.** Il delta
+misurabile non è "Architetto contro Ray", è "Ray oggi rispetto a Ray
+del round precedente".
 
 ## Perché esiste
 
@@ -36,33 +48,47 @@ E ogni round produce un artefatto: un **post-mortem condiviso** scritto
 da Architetto e da Ray dopo la chiusura, che diventa materiale per il
 libro 3 della trilogia *Dal Campo alla Terra*.
 
-## I due principi strutturali
+## I tre principi strutturali
 
 ### 1. Framing realistico
 
-Sfidante **non sa di essere in una sfida**. Ray gli si rivolge come se
-gli avesse appena passato un task di lavoro vero: "Lavoriamo su questo
-modulo `<nome>`, gli utenti riportano errore X, riproduci e sistema."
-Niente menzioni della palestra, di Architetto, del fatto che il bug è
-"deliberato".
+Sfidante **non sa di essere in un esercizio**. Ray gli si rivolge come
+se gli avesse appena passato un task di lavoro vero: "Lavoriamo su
+questo modulo `<nome>`, gli utenti riportano errore X, riproduci e
+sistema." Niente menzioni della palestra, di Architetto, del fatto che
+il caso è curato.
 
-Conseguenza: l'AI Sfidante non cerca trick. Lavora come lavorerebbe su
-qualunque modulo di produzione. La skill che Ray esercita è quella vera:
-dirigere un'AI dev su un problema ambiguo, restringere lo spazio di
-ricerca, distinguere ipotesi promettenti da rabbit hole.
+Conseguenza: l'AI Sfidante lavora come lavorerebbe su qualunque modulo
+di produzione. La skill che Ray esercita è quella vera: dirigere un'AI
+dev su un problema ambiguo, restringere lo spazio di ricerca,
+distinguere ipotesi promettenti da rabbit hole.
 
 ### 2. Isolamento del modulo
 
-Ogni sfida vive in una **sottocartella** del main: `sfida-NN-nome/`.
-Sfidante viene aperto con working directory dentro quella sottocartella.
-Un `CLAUDE.md` locale, scritto come policy di confidenzialità inter-team,
-istruisce di **non navigare fuori** dalla cartella del modulo.
+Ogni round vive in una **sottocartella** del main con un nome neutro
+di modulo (`query-filter/`, `scheduler/`, ecc.). Sfidante viene aperto
+con working directory dentro quella sottocartella, e un `CLAUDE.md`
+locale di policy inter-team gli impedisce di navigare fuori. Tutto il
+materiale di orchestrazione vive in `.orchestrazione/` e `.architetto/`,
+fuori dalla sua cartella.
 
-Sfidante può fare tutti i `git log`, `git blame`, `git diff` che vuole
-sulla working branch: leggerà solo storia del modulo, niente di
-rivelatore. Tutto il materiale di orchestrazione (briefing per Ray,
-chiavi del post-mortem, log) vive in directory hidden a livello root
-(`.orchestrazione/`, `.architetto/`) che sono fuori dalla sua cartella.
+### 3. Lo scenario deve battere l'AI da sola
+
+**È la regola che valida o invalida un round.** Architetto deve
+scegliere casi in cui un'AI dev moderna, lasciata sola con la codebase
+del modulo, **fallirebbe** o **convergerebbe su un fix sbagliato**.
+
+Bug "semantici puliti, inferibili dalla sola codebase, con messaggio
+d'errore specifico" — il tipo di problema che ha allenato i developer
+prima dell'era AI — **non sono scenari di palestra**: l'AI moderna li
+risolve in pochi minuti senza vera direzione umana. Esercitarsi su
+quelli è esercitare le skill del dev di 10 anni fa, non quelle
+dell'orchestratore di oggi.
+
+Vedi `BUG-TAXONOMY.md` per le dimensioni che rendono un caso "scenario
+vero" (test fuorvianti, conoscenza di business mancante, multi-modulo,
+confirmation bias dell'AI, trade-off architetturali, pressione temporale,
+storia del codice non leggibile).
 
 Dettagli in [`AGENTI.md`](./AGENTI.md) e [`REGOLE.md`](./REGOLE.md).
 

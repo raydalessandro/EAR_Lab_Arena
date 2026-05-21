@@ -89,23 +89,46 @@ Sfidante **può fare liberamente**:
 - Lanciare i test, scriverne di nuovi, fare debugging runtime.
 - Aprire branch di lavoro per esperimenti diagnostici.
 
-## Regola 3 — Architetto non introduce bug invisibili
+## Regola 3 — Lo scenario deve battere l'AI da sola
 
 **Affidata all'onore di Architetto, verificata da Ray a fine round.**
 
-Un bug è valido se:
+Questa è la regola che separa un round vero da una perdita di tempo.
+Un caso è scenario di palestra se:
 
-- È **inferibile dal codice del modulo**, senza riferimenti a sistemi
-  esterni o ad altre cartelle del repo. Esiste una catena di ragionamento
-  che, leggendo solo i file di `sfida-NN-nome/`, porta a trovarlo.
-- È **producibile**. Il codice rotto si comporta diversamente da quello
-  sano in qualche modo osservabile (test che fallisce, output sbagliato,
-  errore runtime, comportamento incoerente in una situazione specifica
-  che Ray descrive nel prompt iniziale).
-- È **plausibile**. Il bug assomiglia a qualcosa che un'AI potrebbe
-  davvero produrre per ambiguità di specifica, drift di contesto o
-  disattenzione — o qualcosa che è realmente accaduto in produzione su
-  un repo open source vero, da cui Architetto ha derivato lo scenario.
+- Un'AI dev moderna (Claude / equivalenti), aperta da sola sulla
+  cartella del modulo e con un prompt non-direttivo del tipo "c'è
+  questo sintomo, riproduci e fixa", **fallirebbe** o **convergerebbe
+  su un fix sbagliato** in tempo ragionevole. Cioè: l'orchestratore
+  deve aggiungere valore non trascurabile alla soluzione.
+- Esiste almeno **una dimensione "extra-codebase"** che richiede
+  l'orchestratore: conoscenza di business non scritta nel codice,
+  vincoli da altri team / contratti inter-modulo, test esistenti
+  fuorvianti, confirmation bias prevedibile dell'AI su una pista
+  sbagliata, trade-off architetturale che richiede una decisione umana,
+  pressione temporale operativa, storia del codice non leggibile dal
+  solo diff (vedi `BUG-TAXONOMY.md` per il catalogo aggiornato).
+- È **plausibile in un contesto di lavoro reale**: deriva da un caso
+  realmente accaduto, o ricalca un pattern documentato (post-mortem
+  pubblici, CVE, blog di engineering).
+
+Un caso **non è scenario di palestra** se:
+
+- È un bug semantico pulito inferibile dalla sola codebase del modulo,
+  con messaggio d'errore specifico che porta dritto al colpevole.
+  Esempio archiviato: tipo enumerato non gestito in uno switch (Sfida
+  01 nella prima calibrazione). L'AI da sola lo risolve in pochi
+  minuti — è esercizio per dev pre-AI, non per orchestratore.
+- Richiede di indovinare informazioni che non sono né nel codice né
+  trasmissibili da Ray nel prompt (config segrete, ambiente).
+- Dipende da coincidenze, timing perfetto, o variabili di sistema non
+  documentate.
+
+Se a fine round Ray dice *"l'AI l'ha risolto da sé in 3 mosse senza
+che dovessi dirigere niente"*, il round è invalido come scenario di
+palestra. Architetto perde, il caso entra in `BUG-TAXONOMY.md` sotto
+gli **anti-pattern** (utile lo stesso: anche sapere cosa non funziona
+è dato).
 
 Un bug **non è valido** se:
 
