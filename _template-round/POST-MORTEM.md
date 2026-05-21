@@ -109,3 +109,58 @@ per debuggare codice? Una mossa concreta, non un proposito vago.]
 [La sezione "Cosa Architetto pensava sarebbe successo" sopra:
 era corretta? Sfidante ha davvero guardato dove Architetto prevedeva,
 o ha sorpreso?]
+
+---
+
+## Confronto stima Architetto vs realtà
+
+> Si apre `.architetto/sfida-NN-modulo-stima-architetto.md` (compilato
+> prima del round) e si confronta voce per voce con quello che è
+> davvero successo. È il momento più importante per costruire la
+> `BUG-TAXONOMY.md`.
+
+### Classe del bug
+
+- **Predetta**: [classe assegnata da Architetto in pre-push]
+- **Conferma**: [sì / no / con sfumature]
+- **Voce per la tassonomia**: [classe stabile / candidata / nuova classe
+  da introdurre]
+
+### Difficoltà
+
+- **Predetta**: [N/5]
+- **Osservata**: [N/5, basata sulla fatica reale di Ray]
+- **Delta**: [perché diversa, se diversa]
+
+### Tempo
+
+- **Predetto**: [range]
+- **Osservato**: [reale]
+- **Delta**: [dove l'errore: sottostima del rabbit hole, sopravvalutazione
+  della difficoltà, ecc.]
+
+### Catena di ragionamento
+
+- **Predetta**: [riassunto delle mosse attese]
+- **Effettiva**: [riassunto delle mosse reali estratte dal log]
+- **Punti di convergenza**: [dove la predizione e la realtà sono andate
+  d'accordo]
+- **Punti di divergenza**: [dove no, e cosa ci insegnano]
+
+### Rabbit hole
+
+- **Predetti**: [lista]
+- **Effettivi**: [lista]
+- **Cattura**: [quali predetti si sono materializzati]
+
+### Prediction esplicite
+
+- **P1**: [testo della prediction] → **verificata / smentita** perché [motivo]
+- **P2**: [testo] → **verificata / smentita** perché [motivo]
+
+### Conseguenze per BUG-TAXONOMY.md
+
+> Cosa va aggiunto/modificato/proposto come nuovo nel documento vivo
+> della tassonomia, sulla base di questo round.
+
+[…]

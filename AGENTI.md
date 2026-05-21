@@ -91,6 +91,42 @@ Claude Architetto allora:
 9. **Non** mette `INIZIO.md`, briefing, post-mortem, o riferimenti alla
    palestra dentro la sottocartella.
 
+### Fase 2.5 — Stima pre-push (la predizione)
+
+Prima di committare la sfida sul main, Architetto compila
+`.architetto/sfida-NN-modulo-stima-architetto.md` con la sua **predizione
+falsificabile** sul comportamento atteso di un orchestratore-tipo (NON
+Ray specifico — un orchestratore medio che non legge codice e lavora
+con un'AI dev).
+
+La stima contiene:
+
+- **Classe del bug** dal punto di vista dell'orchestratore: in quale
+  categoria della `BUG-TAXONOMY.md` ricade? Se la categoria non esiste
+  ancora, Architetto la propone come "candidata".
+- **Difficoltà attesa** su scala 1-5 (1 = warm-up · 5 = round limite),
+  con una frase che giustifica il valore.
+- **Tempo atteso** in ore reali di lavoro orchestrato (range, es.
+  "1-3 ore" o "1 giornata").
+- **Catena di ragionamento prevista**: la sequenza di mosse che
+  Architetto si aspetta vedere fare a un orchestratore-tipo.
+- **Rabbit hole probabili**: dove Architetto pensa che l'orchestratore
+  si potrebbe perdere. Più sono specifici, più la stima è falsificabile.
+- **Prediction esplicita**: una o due affermazioni concrete sul round
+  ("scommetto che l'orchestratore proverà X prima di Y", "scommetto
+  che chiederà al modello Z, e il modello risponderà W"). A fine round
+  verifichiamo.
+
+Questa stima è il **contributo originale** della palestra: la
+classificazione dei bug per *difficoltà di orchestrazione* (non per
+difficoltà di lettura codice). A fine round si confronta con la realtà
+nella sezione apposita del `POST-MORTEM.md`, e il delta alimenta
+`BUG-TAXONOMY.md`.
+
+**Default: stima cieca**. Ray non legge `.architetto/stima-architetto.md`
+prima del round. Sapere la predizione contaminerebbe il suo gioco. La
+si apre solo a round chiuso.
+
 ### Fase 3 — Materiali di orchestrazione e chiave
 
 10. Crea `.orchestrazione/sfida-NN-modulo/` (con prefisso `sfida-NN-`
