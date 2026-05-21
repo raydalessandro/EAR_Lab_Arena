@@ -94,10 +94,22 @@ dimensioni in evidenza, sennò non vale.
   workaround dimenticato. Capire la storia richiede contesto extra-
   codice (e/o domande mirate a chi era lì all'epoca — qui non
   disponibili, vanno simulate da Architetto).
+- **D8 — Localizzazione difficile in sistema grande**. La codebase
+  è abbastanza grande, o ha pattern di indirezione (event bus,
+  middleware, DI, callback, observer) tali che l'AI con context
+  standard **non vede insieme** il sintomo e la causa. Il fix una
+  volta localizzato è semplice — l'AI lo fa benissimo. Il valore
+  dell'orchestratore è interamente nella **navigazione**: dirigere
+  l'AI passo per passo dal sintomo alla causa, attraverso il sistema.
+  Skill esercitata: mantenere un modello mentale del flusso di
+  esecuzione e darlo all'AI un pezzo per volta. Dimensione
+  individuata da Ray come prima intuizione formalizzata di
+  "difficoltà specifica all'orchestrazione".
 
 Una dimensione può apparire in più round, e in combinazione con
 altre. Combinazioni miste sono benvenute (es. D1+D4 = "i test verdi
-inducono confirmation bias nell'AI").
+inducono confirmation bias nell'AI"; D8+D4 = "L'AI converge su una
+falsa causa in un'area sbagliata del sistema grande").
 
 ---
 
@@ -156,3 +168,17 @@ che passi il test di validità della Regola 3)._
   dire dall'AI, dove sbaglia a dirigere.
 - Una classe è utile se predice qualcosa di operativo: tempo,
   difficoltà, mosse di orchestrazione efficaci.
+
+## Sul valore delle calibrazioni fallite
+
+I 3 round della prima calibrazione (archiviati come anti-pattern AP1)
+**non sono uno spreco**: sono il primo punto-dati scientifico della
+palestra. Hanno dimostrato concretamente che il delta dev/orchestratore
+non è una sfumatura ma un cambio di paradigma. Senza averli costruiti e
+averli riconosciuti come non-sfide, non avremmo capito che lo erano.
+
+Principio operativo: ogni iterazione del modello — anche quelle che
+"sbagliano" — è materiale per la tassonomia. La calibrazione fallita
+si registra; non si nasconde, non si scarta, non si riscrive la storia.
+Diventa proprio l'asse Y della tassonomia: la **distanza dalla
+non-sfida**.
