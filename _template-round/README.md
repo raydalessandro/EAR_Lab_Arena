@@ -2,28 +2,27 @@
 
 > Questa cartella è uno **scheletro didattico**, non un round vero.
 
-Mostra come è strutturato un round dell'arena: i tre file canonici
-(`INIZIO.md`, `log-orchestrazione.md`, `POST-MORTEM.md`) e il loro
-contenuto previsto.
+Mostra il formato dei file di orchestrazione che vivono in
+`.orchestrazione/sfida-NN-nome/`:
+
+- `briefing-per-ray.md` — descrizione del sintomo riproducibile, scritta
+  da Architetto al momento dell'armamento, per uso di Ray quando
+  costruisce il prompt iniziale a Sfidante.
+- `log-orchestrazione.md` — diario delle mosse di Ray durante il round.
+- `POST-MORTEM.md` — rivelazione del bug + analisi, compilato a round
+  chiuso da Architetto e Ray.
 
 ## A cosa serve
 
-- **A Claude Architetto**: quando arma una nuova branch `sfida-NN-nome`,
-  copia questi tre file dalla cartella `_template-round/` dentro la
-  radice della branch armata, e poi li compila secondo il round.
-
-- **A Claude Sfidante**: per capire al volo cosa aspettarsi trovando
-  questi file nella sua branch di lavoro.
-
+- **A Claude Architetto**: quando arma una nuova sfida, copia questi
+  template in `.orchestrazione/sfida-NN-nome/` e li compila.
 - **A chi arriva sul repo da fuori**: per capire il formato di un round
-  senza dover navigare nelle branch storiche.
+  senza dover aprire `.orchestrazione/` di un round specifico.
 
 ## Cosa NON c'è qui
 
-- Non c'è codice. Il codice della codebase del round vive nel main
-  (versione pulita) e nelle branch armate (versione bug-ata).
-- Non c'è patch.diff. Il bug viene committato direttamente da
-  Architetto sulla branch, non passa mai per un file di transito
-  (vedi [`../AGENTI.md`](../AGENTI.md)).
-- Non c'è soluzione. La soluzione è dentro `POST-MORTEM.md` di ogni
-  round, nelle branch archiviate.
+- Non c'è codice. Il codice della codebase armata vive direttamente in
+  `sfida-NN-nome/` sul main come modulo isolato.
+- Non c'è la chiave del bug. La rivelazione privata vive in
+  `.architetto/sfida-NN-nome-postmortem-key.md`, separata dal
+  post-mortem pubblico (e va aperta solo a round chiuso, da Architetto).

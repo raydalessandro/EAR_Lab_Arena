@@ -10,7 +10,7 @@
 
 ## Il bug
 
-**File**: `codebase/src/sections/LayerAndMaskInformation/readLayerRecordsAndChannels.ts`
+**File**: `sfida-03-binary-parser/src/sections/LayerAndMaskInformation/readLayerRecordsAndChannels.ts`
 **Punto**: il calcolo dello skip per le scan lines di un channel.
 
 Il codice calcolava il numero di byte da skippare per un channel come `scanLines * bytesPerScanline` (ipotizzando che ogni channel avesse sempre dati). Per i layer di tipo **gradient fill** prodotti da editor di terze parti (Photopea in particolare), il `channelDataLength` di certi channel è **0** — non c'è nessun dato da skippare. Quando il codice provava comunque a skip-are `scanLines * bytesPerScanline` byte, il cursor andava oltre i bounds del buffer. La successiva allocazione di un `Uint8Array(buffer, offset, length)` con offset/length out-of-range produceva `RangeError: Invalid typed array length`.

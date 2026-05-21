@@ -1,0 +1,17 @@
+{
+  "name": "sfida-03-codebase",
+  "version": "0.2.0-arena",
+  "description": "Lightweight PSD file parser with no runtime dependency, written in TypeScript.",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "test": "vitest --run",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^8.3.2",
+    "typescript": "^4.7.3",
+    "vite": "^2.9.14",
+    "vitest": "^0.18.0"
+  }
+}

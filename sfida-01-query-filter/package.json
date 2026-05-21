@@ -1,0 +1,43 @@
+{
+  "name": "sfida-01-codebase",
+  "version": "1.0.0",
+  "description": "Lightweight Lucene-like parser, serializer and search engine for filtering arrays of objects.",
+  "license": "BSD-3-Clause",
+  "engines": {
+    "node": ">=12.0"
+  },
+  "dependencies": {
+    "nearley": "^2.20.1",
+    "ts-error": "^1.0.6"
+  },
+  "devDependencies": {
+    "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "@types/node": "^16.10.9",
+    "@types/semver-compare": "^1.0.1",
+    "@types/sinon": "^10.0.4",
+    "ava": "4.3.3",
+    "del-cli": "^4.0.1",
+    "eslint": "^7.32.0",
+    "nyc": "^15.1.0",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.4.4"
+  },
+  "scripts": {
+    "build": "del-cli ./dist && tsc",
+    "compile-parser": "nearleyc src/grammar.ne --out ./src/grammar.ts && sed -i '' 's/loc?: number/loc: number/g' src/grammar.ts",
+    "dev": "tsc --watch",
+    "lint": "eslint ./src ./test && tsc --noEmit",
+    "test": "NODE_ENV=test ava --serial --verbose"
+  },
+  "ava": {
+    "extensions": [
+      "ts"
+    ],
+    "files": [
+      "test/unit/**/*"
+    ],
+    "require": [
+      "ts-node/register/transpile-only"
+    ]
+  }
+}

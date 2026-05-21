@@ -1,12 +1,14 @@
 # Log di orchestrazione — Sfida NN
 
-> Questo file si scrive **mentre** il round è in corso, sulla branch
-> `sfida-NN-nome`. È il diario delle mosse di Ray nel dialogo con
-> Claude Sfidante. È la sorgente di verità più preziosa di tutto
-> l'esercizio: qui si vede come si orchestra una mente artificiale
-> in tempo reale.
+> Questo file si scrive **mentre** il round è in corso, in
+> `.orchestrazione/sfida-NN-nome/log-orchestrazione.md`. È il diario
+> delle mosse di Ray nel dialogo con Claude Sfidante. È la sorgente di
+> verità più preziosa di tutto l'esercizio: qui si vede come si
+> orchestra una mente artificiale in tempo reale.
 >
-> Lo scrive Sfidante sotto dettatura di Ray, oppure Ray a mano.
+> Lo scrive Ray (a mano), oppure dettato a un'AI di supporto separata
+> dallo Sfidante. **Mai** dentro la sottocartella della sfida (Sfidante
+> lo vedrebbe).
 
 ## Setup della sessione
 
@@ -14,9 +16,10 @@
   modello Claude Opus 4.7"]
 - **Strumenti disponibili a Sfidante**: [es. "bash, str_replace,
   create_file, view, web_search disabilitato"]
-- **Stato iniziale del repo passato a Sfidante**: branch
-  `sfida-NN-nome` in checkout, nessuna istruzione di confronto
-  col main.
+- **Stato iniziale del repo passato a Sfidante**: working directory
+  in `sfida-NN-nome/`, working branch dal main. Sfidante non riceve
+  istruzioni di natura "questa è una sfida": il framing è "task di
+  lavoro normale".
 
 ## Strategia iniziale di Ray
 
@@ -52,7 +55,7 @@
 > - "Ho realizzato che Sfidante stava cercando nel posto sbagliato"
 > - "Sfidante mi ha proposto un'ipotesi che ho deciso di seguire,
 >    contro il mio istinto"
-> - "Ho dovuto fermare Sfidante che voleva fare git checkout main"
+> - "Ho dovuto fermare Sfidante che voleva uscire dalla cartella del modulo"
 > - "Mi sono accorto di un pattern di codice che torna in più file
 >    e ho chiesto a Sfidante di confrontarli"
 

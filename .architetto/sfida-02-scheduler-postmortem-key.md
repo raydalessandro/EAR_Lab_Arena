@@ -9,7 +9,7 @@
 
 ## Il bug
 
-**File**: `codebase/src/pattern.ts`
+**File**: `sfida-02-scheduler/src/pattern.ts`
 **Funzione**: `extractNth(conf: string, type: string)` (intorno alla riga 477 nel pre-fix)
 
 La funzione era responsabile di estrarre il modificatore "nth weekday" dal campo day-of-week. Gestiva correttamente il formato esteso `#L` (es. `5#L`) ma non riconosceva la forma shorthand della stessa spec: la `L` come **suffisso diretto** sul giorno (es. `FRIL`, `5L`, `MONL`).

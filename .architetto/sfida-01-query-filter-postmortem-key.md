@@ -10,7 +10,7 @@
 
 ## Il bug
 
-**File**: `codebase/src/internalFilter.ts`
+**File**: `sfida-01-query-filter/src/internalFilter.ts`
 **Funzione**: `internalFilter` (lo switch sui tipi di nodo AST)
 
 Lo switch gestisce i tipi `Tag`, `LogicalExpression`, `UnaryOperator`. Mancava il branch per `ParenthesizedExpression`. Quando il `parse()` produceva un AST contenente `ParenthesizedExpression` (cioè ogni volta che la query usava parentesi per raggruppare), `internalFilter` cadeva nel ramo di default e tentava di accedere a `expression.left` su un nodo che non ha quel campo, lanciando l'errore `Expected left to be defined`.

@@ -1,8 +1,8 @@
 # Post-mortem — Sfida NN
 
-> Si scrive **dopo** la chiusura del round, sulla branch
-> `sfida-NN-nome`. Tre voci distinte: Architetto, Ray, sintesi
-> condivisa. Si vede chi dice cosa.
+> Si scrive **dopo** la chiusura del round, in
+> `.orchestrazione/sfida-NN-nome/POST-MORTEM.md`. Tre voci distinte:
+> Architetto, Ray, sintesi condivisa. Si vede chi dice cosa.
 
 ---
 
@@ -12,7 +12,7 @@
 - **Tempo reale**: [ore]
 - **Numero di mosse di Ray con Sfidante**: [N]
 - **Verdetto sulla Regola 3**: [il bug era inferibile dall'interno
-  della branch armata? sì / no, perché]
+  della sottocartella armata? sì / no, perché]
 
 ---
 

@@ -1,8 +1,10 @@
 # AGENTI.md — Il contratto delle due istanze di Claude Code
 
-> Questo file dichiara i ruoli delle due istanze di Claude Code
-> coinvolte in un round di sfida. Ogni istanza deve leggere questo
-> file all'inizio di ogni sessione, prima di toccare il repo.
+> Questo file dichiara i ruoli delle due istanze di Claude Code coinvolte
+> in un round di sfida. Ogni istanza **Architetto** deve leggere questo
+> file all'inizio di ogni sessione, prima di toccare il repo. Sfidante
+> **non** legge questo file (vive fuori dalla sua cartella, e il framing
+> "lavoro reale" non lo prevede).
 
 ## Ruoli
 
@@ -10,176 +12,181 @@ Un round di `ear-lab-arena` coinvolge **tre attori**:
 
 1. **Ray** — l'orchestratore umano, giudice di gara e osservatore.
    Non scrive codice, non lancia comandi git. Apre due finestre di
-   Claude Code, scrive prompt in italiano, osserva, decide quando
-   il round si chiude.
+   Claude Code, scrive prompt in italiano, osserva, decide quando il
+   round si chiude.
 
-2. **Claude Architetto** — l'istanza che introduce il bug.
-   Lavora in un **ambiente isolato**: clona la codebase originale,
-   la modifica, e pusha solo lo stato finale come singolo commit
-   sulla branch armata.
+2. **Claude Architetto** — l'istanza che prepara la sfida. Aggiunge una
+   sottocartella `sfida-NN-nome/` al main del repo, dentro cui vive lo
+   stato pre-fix di una codebase reale con un bug realmente accaduto.
 
-3. **Claude Sfidante** — l'istanza che cerca di risolvere il bug.
-   Lavora in checkout della branch armata di `ear-lab-arena`,
-   senza accesso al main, senza storico significativo.
+3. **Claude Sfidante** — l'istanza che cerca di risolvere il bug. Lavora
+   in una working branch dal main, con working directory **dentro la
+   sottocartella della sfida**. **Non sa di essere in una sfida**: il
+   framing che Ray gli fornisce è quello di un task di lavoro normale.
 
-**Le due istanze non comunicano fra loro.** Tutto passa attraverso
-Ray e attraverso lo stato del repo.
+**Le due istanze non comunicano fra loro.** Tutto passa attraverso Ray
+e attraverso lo stato del repo.
 
-## Il principio dell'ambiente isolato
+## Il principio del framing realistico
 
-Questo è il principio tecnico che rende la sfida onesta:
+Questo è il principio operativo che rende la palestra utile:
 
-**Architetto non ha mai un checkout di `ear-lab-arena` durante la
-fase di armamento.** Architetto lavora su una copia separata della
-codebase, nella sua directory di lavoro. Solo quando il bug è pronto,
-pusha lo stato finale su una nuova branch dell'arena, come singolo
-commit.
+**Sfidante crede di star lavorando su un modulo di produzione vero**, non
+in un esercizio. Non c'è nessun "INIZIO.md" da leggere, nessun briefing
+di palestra dentro la sua cartella, nessun riferimento ad Architetto.
+Solo il codice del modulo + un `CLAUDE.md` locale che descrive il modulo
+come parte di un sistema più grande con confidenzialità inter-team.
 
-Conseguenza: la storia git della branch armata è **sterile**. Sfidante
-può fare `git log`, `git blame`, `git diff HEAD~1` quanto vuole —
-non trova niente. Lo storico delle modifiche di Architetto non esiste
-sulla branch.
+Quello che Sfidante riceve da Ray, all'apertura della sessione, è un
+**prompt iniziale stile bug report**: il sintomo concreto come se fosse
+arrivato da un cliente o da un altro team. Ray prepara quel prompt
+leggendo il file `.orchestrazione/sfida-NN-nome/briefing-per-ray.md`
+(scritto da Architetto al momento dell'armamento, riservato a Ray).
 
-Questo libera le regole dall'obbligo di proibire `git log` a Sfidante.
-Sfidante può usare git liberamente: semplicemente non c'è niente da
-scoprire.
+Conseguenza: la skill che si allena è quella vera del mestiere. Dirigere
+un'AI dev quando il problema è ambiguo, restringere lo spazio di ricerca,
+distinguere ipotesi promettenti da rabbit hole. Senza la deformazione
+"so che è una sfida quindi cerco il trick".
 
 ## Cosa fa Claude Architetto
 
 All'inizio di un round, Ray scrive a Claude Architetto:
 
-> "Apro la sfida NN. La codebase è [scelta]. Procedi."
+> "Apro la sfida NN. Proponi 3 candidati di caso reale (TS open source,
+> calibro X righe, bug semantico documentato). Procedi."
 
 Claude Architetto allora:
 
-### Fase 1 — Pulizia del main
+### Fase 1 — Ricerca del caso reale
 
-1. Fa checkout del main di `ear-lab-arena`.
-2. Cancella i file della codebase del round precedente (se ce ne sono),
-   lasciando solo `README.md`, `REGOLE.md`, `ALBO.md`, `AGENTI.md`,
-   `.gitignore`, e `_template-round/`.
-3. Clona la codebase pulita del round NN dentro il main.
-4. Fa commit `chore(sfida-NN): codebase pulita`.
-5. Pusha sul main.
+1. Cerca repo open source TypeScript di calibro adeguato dove un bug
+   semantico è stato documentato (issue + PR di fix).
+2. Identifica lo SHA del commit immediatamente PRIMA del fix (lo stato
+   "armato" naturale).
+3. Verifica che il bug sia inferibile dalla sola codebase, producibile,
+   plausibile (Regola 3).
+4. Presenta a Ray 2-3 candidati anonimizzati (dominio + sintomo + calibro,
+   no nome repo, no link), Ray sceglie.
 
-### Fase 2 — Armamento in ambiente isolato
+### Fase 2 — Costruzione della sottocartella
 
-6. Esce dal checkout di `ear-lab-arena`.
-7. In una **directory di lavoro separata**, clona di nuovo la codebase
-   originale (la stessa pulita, ma da fonte indipendente).
-8. Introduce il bug. Una o più modifiche, in uno o più file, secondo
-   la sua strategia.
-9. Verifica che il bug sia inferibile dalla branch armata sola (test
-   mentale della Regola 3).
-10. Compila `INIZIO.md` con il briefing pubblico (senza rivelare il bug).
-11. Mette `INIZIO.md` insieme al codice modificato.
+5. Sul **main**, crea una sottocartella `sfida-NN-nome/`.
+6. Dentro la sottocartella: la codebase del caso reale al commit pre-fix,
+   con metadati di branding **anonimizzati**:
+   - `package.json` / `deno.json`: nome, repository, homepage, author
+     rimossi o sostituiti con placeholder
+   - README, CHANGELOG, `.github/`, file di marketing rimossi
+   - Eventuali dipendenze interne al monorepo originale stubbate con
+     placeholder o rimosse (dichiarando l'adattamento nel briefing per
+     Ray)
+7. Mantiene `LICENSE` intatta per rispetto della licenza OSS.
+8. Aggiunge un `CLAUDE.md` di modulo che descrive la confidenzialità
+   inter-team (scope dentro la cartella, non navigare fuori).
+9. **Non** mette `INIZIO.md`, briefing, post-mortem, o riferimenti alla
+   palestra dentro la sottocartella.
 
-### Fase 3 — Push della branch armata
+### Fase 3 — Materiali di orchestrazione e chiave
 
-12. Torna nel checkout di `ear-lab-arena`.
-13. Crea la branch `sfida-NN-nome-breve` dal main.
-14. Sostituisce il contenuto della branch con lo stato finale prodotto
-    in Fase 2 (codebase modificata + `INIZIO.md`).
-15. Fa **un solo commit** sulla branch: `scenario(sfida-NN): codebase
-    armata`.
-16. Pusha la branch.
+10. Crea `.orchestrazione/sfida-NN-nome/` con:
+    - `briefing-per-ray.md`: descrizione onesta del sintomo riproducibile,
+      che Ray userà per costruire il prompt iniziale a Sfidante.
+    - `log-orchestrazione.md`: diario delle mosse di Ray durante il round
+      (Ray scrive qui durante il gioco).
+    - `POST-MORTEM.md`: vuoto, da compilare a round chiuso.
+11. Crea `.architetto/sfida-NN-nome-postmortem-key.md` con la chiave
+    privata del bug: file/funzione del fix, link a issue/PR upstream,
+    catena di ragionamento attesa. Per uso di Architetto futuro al
+    momento del post-mortem.
+12. Aggiorna `ALBO.md` con la riga della sfida in stato "in corso".
 
-### Fase 4 — Comunicazione a Ray
+### Fase 4 — Commit e comunicazione a Ray
 
-17. Aggiorna `ALBO.md` sul main con la riga della sfida in corso
-    (esito: "in corso").
-18. Conferma a Ray: "Sfida NN pronta. Branch `sfida-NN-nome`.
-    Briefing pubblico in `INIZIO.md`."
+13. Single commit sul main: `scenario(sfida-NN): codebase armata`.
+14. Push sul main.
+15. Conferma a Ray: "Sfida NN pronta come sottocartella
+    `sfida-NN-nome/`. Briefing in `.orchestrazione/...`."
 
 **Cosa Claude Architetto NON fa, mai:**
 
 - Non rivela il bug a Ray in chat durante il round.
-- Non lascia indizi nel messaggio di commit oltre allo standard.
-- Non fa commit intermedi sulla branch armata (deve essere un singolo
-  commit, sennò la storia rivela qualcosa).
+- Non mette `INIZIO.md` o file di framing palestra dentro la sottocartella
+  (Sfidante li vedrebbe e capirebbe).
 - Non scrive in `POST-MORTEM.md` finché il round non è chiuso.
-- Non risponde a domande tipo "in che file hai messo il bug?".
+- Non risponde a domande di Ray tipo "in che file hai messo il bug?".
   Risponde solo: "vedrai nel post-mortem, a round chiuso".
 
 ## Cosa fa Claude Sfidante
 
 All'inizio di un round, Ray apre una **nuova istanza** di Claude Code
-(non la stessa di Architetto) e scrive:
+con working directory **dentro `sfida-NN-nome/`** (idealmente da una
+working branch dal main, es. `ray-work-sfida-NN-nome`). Il prompt
+iniziale che Ray scrive a Sfidante è in stile bug report, **senza
+menzionare la palestra**. Esempio:
 
-> "Lavora sulla branch `sfida-NN-nome` del repo ear-lab-arena.
-> Leggi `INIZIO.md`. C'è un bug. Aiutami a trovarlo e fixarlo."
-
-Idealmente Ray, prima di passare il controllo a Sfidante, fa un clone
-del repo con `git clone --single-branch --branch sfida-NN-nome [url]`,
-così Sfidante non ha nemmeno il riferimento al main nel suo checkout
-locale. Questa è una protezione strutturale opzionale.
+> "Lavoriamo su questo modulo `query-filter`. Stiamo ricevendo segnalazioni
+> di un errore quando gli utenti combinano certe condizioni di filtro con
+> parentesi. Esempio: `filter(parse('(name:foo AND bio:bar) OR name:fox'),
+> data)` lancia errore. Riproduci, diagnostica, sistema. Stai dentro al
+> modulo, il resto del repo appartiene ad altri team."
 
 Claude Sfidante allora:
 
-1. Si trova in checkout della branch armata.
-2. Legge `INIZIO.md` per avere il briefing pubblico.
-3. Esplora la codebase, propone ipotesi, scrive test diagnostici,
-   fa indagine.
-4. Può creare quante **branch di lavoro** vuole, a partire dalla
-   branch armata, per testare ipotesi senza sporcare il codice
-   principale.
+1. Si trova in cwd dentro la sottocartella.
+2. Legge il `CLAUDE.md` locale come istruzioni di lavoro.
+3. Esplora la codebase, propone ipotesi, scrive test diagnostici, fa
+   indagine.
+4. Può creare quante **branch di lavoro** vuole (dalla working branch
+   corrente) per testare ipotesi.
 5. Quando trova il bug, propone il fix a Ray.
-6. Su approvazione di Ray, applica il fix sulla branch armata
-   (`sfida-NN-nome`), scrive un test che dimostra il fix, fa commit
-   e push.
-7. Aggiorna `log-orchestrazione.md` nella branch armata con le mosse
-   significative dettate da Ray.
+6. Su approvazione di Ray, applica il fix, scrive un test che lo
+   dimostra, commit + push sulla working branch.
+7. Apre PR verso main (oppure Ray la apre).
 
-**Cosa Claude Sfidante NON deve fare:**
+**Cosa Claude Sfidante non deve fare** (Regola 2):
 
-- `git checkout main`.
-- `git diff main`.
-- `git log main`, `git show main`, o letture di contenuto del main.
-- Aprire `/compare/main...sfida-NN` su GitHub.
-- Chiedere a Ray "posso vedere com'era il file prima?".
+- `cd ..`, `ls ..`, leggere/grep fuori dalla sua cartella.
+- Aprire `.orchestrazione/`, `.architetto/`, le cartelle delle altre sfide.
+- Aprire pagine GitHub di compare con altri branch del repo.
 
-Sfidante **può fare liberamente**:
+**Sfidante può fare liberamente:**
 
-- Tutti i `git log`, `git blame`, `git diff HEAD~1` che vuole sulla
-  branch armata. Non troverà niente perché lo storico è sterile
-  (vedi "Principio dell'ambiente isolato").
-- Domande a Ray sul briefing.
+- Tutti i comandi git sulla branch corrente.
+- Lanciare test, scriverne, fare debugging.
 - Proporre più ipotesi e chiedere a Ray quale verificare per prima.
-- Scrivere test diagnostici per restringere il problema.
-- Dichiarare resa, se dopo un numero di tentativi concordato con Ray
-  non trova il bug.
+- Dichiarare resa se dopo un numero di tentativi non trova il bug.
 
 ## La chiusura del round
 
 Quando il round si chiude (vittoria, sconfitta o pareggio):
 
-1. Ray torna su Claude Architetto e dice: "Round NN chiuso.
-   Esito: [Ray ha trovato / Ray si è arreso / pareggio].
-   Scriviamo il post-mortem."
+1. Ray torna su Claude Architetto e dice: "Round NN chiuso. Esito: [Ray
+   ha trovato / Ray si è arreso / pareggio]. Scriviamo il post-mortem."
 2. Claude Architetto:
-   - Fa checkout della branch `sfida-NN-nome`.
-   - Crea `POST-MORTEM.md` dalla sua prospettiva (rivela il bug,
-     spiega la strategia di armamento, dichiara se la sua previsione
-     iniziale si è verificata).
-   - Aggiorna `ALBO.md` sul main con l'esito definitivo.
-3. Ray completa il `POST-MORTEM.md` con la sua prospettiva (può farlo
-   in sessione con Architetto, o in sessione separata con un'istanza
-   di Claude Code in modalità "scriba").
-4. Ultimo commit sulla branch: `docs(sfida-NN): post-mortem`.
-5. La branch resta lì, in archivio. **Non si merga mai sul main.**
-6. Per il prossimo round, si riparte dalla Fase 1 di "Cosa fa Claude
-   Architetto", che ripulisce il main e ci carica la nuova codebase.
+   - Legge `.architetto/sfida-NN-nome-postmortem-key.md` per recuperare
+     la chiave.
+   - Compila `.orchestrazione/sfida-NN-nome/POST-MORTEM.md` con la sua
+     prospettiva (rivela il bug, spiega la strategia di armamento,
+     dichiara se la sua previsione iniziale si è verificata).
+   - Aggiorna `ALBO.md` con l'esito definitivo.
+3. Ray completa il `POST-MORTEM.md` con la sua prospettiva.
+4. Se Sfidante aveva trovato e fixato il bug, la working branch si merga
+   sul main come "fix(sfida-NN): risoluzione". Altrimenti resta come
+   archivio non mergiata.
+5. La sottocartella `sfida-NN-nome/` resta sul main, come museo del
+   round giocato. **Non si tocca più.**
+6. Per il prossimo round, Architetto aggiunge `sfida-(NN+1)-nome/` come
+   nuova sottocartella, senza toccare le precedenti.
 
 ## Onestà strutturale
 
 Le due istanze di Claude Code condividono il modello sottostante.
-Architetto e Sfidante sono "fratelli" che non si parlano. Il fatto
-che condividano la stessa formazione di base **non è imbroglio**:
-è esattamente la realtà del mestiere di Ray. Quando lavorerà in
-produzione, orchestrerà istanze di Claude per costruire codice e
-istanze di Claude per debuggarlo. La sfida riflette il suo lavoro
-reale, non un setup artificiale.
+Architetto e Sfidante sono "fratelli" che non si parlano. Il fatto che
+condividano la stessa formazione di base **non è imbroglio**: è
+esattamente la realtà del mestiere di Ray. Quando lavorerà in produzione,
+orchestrerà istanze di Claude per costruire codice e istanze di Claude
+per debuggarlo. La sfida riflette il suo lavoro reale, non un setup
+artificiale.
 
-Quello che misuriamo non è "quanto Claude batte Claude". È:
-**quanto la coppia Ray+Sfidante riesce a contrastare Architetto**.
-Il delta è Ray. Quel delta è ciò che cresce.
+Quello che misuriamo non è "quanto Claude batte Claude". È: **quanto la
+coppia Ray+Sfidante riesce a contrastare Architetto**. Il delta è Ray.
+Quel delta è ciò che cresce.

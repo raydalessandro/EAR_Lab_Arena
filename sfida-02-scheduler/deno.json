@@ -1,0 +1,22 @@
+{
+  "name": "sfida-02-codebase",
+  "version": "1.0.0-arena",
+  "exports": "./src/croner.ts",
+  "lint": {
+    "include": ["src"]
+  },
+  "fmt": {
+    "include": ["src", "test"],
+    "lineWidth": 100
+  },
+  "tasks": {
+    "test": "deno test --allow-read"
+  },
+  "nodeModulesDir": "auto",
+  "imports": {
+    "@cross/fs": "jsr:@cross/fs@~0.1.11",
+    "@cross/test": "jsr:@cross/test@~0.0.14",
+    "@std/assert": "jsr:@std/assert@~1.0.6",
+    "@std/path": "jsr:@std/path@~1.1.2"
+  }
+}
